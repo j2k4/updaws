@@ -1,0 +1,14 @@
+{
+  "name": "updaws",
+  "version": "1.0.1",
+  "description": "Updates ~/.aws/config [default] section with clipboard credentials",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "updaws": "./app.js"
+  },
+  "author": "Jonathan Keith",
+  "license": "ISC"
+}
