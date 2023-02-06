@@ -1,6 +1,6 @@
 {
   "name": "updaws",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Updates ~/.aws/config [default] section with clipboard credentials",
   "main": "app.js",
   "scripts": {
