@@ -2,7 +2,11 @@
 
 This simple package is made for updating the AWS CLI credentials in the `~/.aws/config` file on macOS by reading from stdin. 
 
-`updaws` expects that the contents of the clipboard be in the following format:
+1. Copy contents from the AWS SSO credentials screen to your clipboard.
+2. Run `updaws` in your terminal.
+3. Profit!
+
+`updaws` expects that the contents of the clipboard be in the following format (because the AWS SSO credentials screen is in this format):
 
 ```
 [SSO_Profile_Name]
