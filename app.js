@@ -9,7 +9,7 @@ const configPath = `${process.env.HOME}/.aws/config`;
 
 const rl = readline.createInterface({
     input: process.stdin,
-    _output: process.stdout
+    output: process.stdout
 });
 
 const validateCredentials = (credentials) => {
@@ -112,7 +112,7 @@ const updateAWSConfig = (credentials) => {
   
     try {
       fs.writeFileSync(configPath, config, 'utf-8');
-      console.log('AWS config file successfully updated.');
+      console.log(`${configPath} file successfully updated.`);
     } catch (error) {
       console.error(`Error writing updated AWS config: ${error}`);
     }
@@ -133,6 +133,15 @@ exec("pbpaste", (error, stdout, stderr) => {
     }
 
     readExistingConfig();
+
     // ok to update the file now, but will still ask the user to confirm
-    updateAWSConfig(credentials);;
+
+    rl.question(`Do you want to write the config to ${configPath} (y/n)? `, answer => {
+        if (answer === "y") {
+          updateAWSConfig(credentials);
+        } else {
+          console.log("Exiting program.");
+        }
+        rl.close();
+      });
 });
