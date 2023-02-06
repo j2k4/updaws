@@ -1,6 +1,6 @@
 ## updaws
 
-This simple package is made for updating the AWS CLI credentials in the `~/.aws/config` file on macOS by reading from stdin. 
+This simple package is made for updating the AWS CLI credentials in the `~/.aws/config` file on macOS by reading from the clipboard. 
 
 ### Usage
 
