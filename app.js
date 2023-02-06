@@ -7,6 +7,12 @@ let _region = "us-east-2";
 let _output = "text";
 const configPath = `${process.env.HOME}/.aws/config`;
 
+const args = process.argv.slice(2);
+let _profile = 'default'
+if (args.length && new RegExp(/\w+/).test(args[0])) {
+    _profile = args[0];
+}
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -71,7 +77,27 @@ const readExistingConfig = () => {
     _output = output ? output : _output;
 }
 
-const updateAWSConfig = (credentials) => {
+
+const updateAWSConfigNamedProfile = (credentials, profileName) => {
+    const lines = credentials.split('\n');
+    lines.shift(); // ignore the first line
+    const accessKeyLine = lines[0];
+    const secretKeyLine = lines[1];
+    const sessionTokenLine = lines[2];
+   
+    const existingConfig = fs.readFileSync(configPath, 'utf-8');
+    let config =  existingConfig;
+    config += `\n[${profileName}]\nregion = ${_region}\noutput = ${_output}\n${accessKeyLine}\n${secretKeyLine}\n${sessionTokenLine}`;
+  
+    try {
+      fs.writeFileSync(configPath, config, 'utf-8');
+      console.log(`${configPath} file successfully updated.`);
+    } catch (error) {
+      console.error(`Error writing updated AWS config: ${error}`);
+    }
+  };
+
+const updateAWSConfigDefaultProfile = (credentials) => {
     const lines = credentials.split('\n');
     lines.shift(); // ignore the first line
     const accessKeyLine = lines[0];
@@ -138,7 +164,9 @@ exec("pbpaste", (error, stdout, stderr) => {
 
     rl.question(`Do you want to write the config to ${configPath} (y/n)? `, answer => {
         if (answer === "y") {
-          updateAWSConfig(credentials);
+            _profile == 'default' ? 
+            updateAWSConfigDefaultProfile(credentials) : 
+            updateAWSConfigNamedProfile(credentials, _profile);
         } else {
           console.log("Exiting program.");
         }

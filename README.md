@@ -2,9 +2,34 @@
 
 This simple package is made for updating the AWS CLI credentials in the `~/.aws/config` file on macOS by reading from stdin. 
 
+### Usage
+
+See screenshots below for more details.
+
 1. Copy contents from the AWS SSO credentials screen to your clipboard.
 2. Run `updaws` in your terminal.
 3. Profit!
+
+If you want to get real fancy, you can save the credentials you copied to a named profile by giving `updaws` a profile name as an argument.
+
+```$ updaws my-profile-name```
+
+Which will update the `~/.aws/config` file with the following new section:
+
+```
+[profile my-profile-name]
+region=us-east-1
+output=text
+aws_access_key_id=ASIA6GGZZ5SSAMPSES
+aws_secret_access_key=78LR3IUSAMPLE9vnw+tYLCOOVjhwKYc2pBpV
+aws_session_token=IQoJb3JpZ2luX2SAMPLEkHwdKmrgA
+```
+
+And then you can use this credentials in the AWS CLI using the `--profile` flag:
+
+```$ aws s3 ls --profile my-profile-name```
+
+### More Details
 
 `updaws` expects that the contents of the clipboard be in the following format (because the AWS SSO credentials screen is in this format):
 
