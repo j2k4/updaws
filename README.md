@@ -15,8 +15,8 @@ If `updaws` does not find the `aws_access_key_id`, `aws_secret_access_key`, or `
 
 `updaws` is for people who have multiple AWS SSO profiles and want to easily update their credentials in the `~/.aws/config` file. Maybe `aws sso login` doesn't work for you, or you just want to update your credentials without having to open the AWS CLI. You probably see a screen something like this one, and Option 1 doesn't work for you, either.
 
-![AWS SSO Login Screen](https://raw.githubusercontent.com/bradleyfalzon/updaws/master/sso-login.png)
+![AWS SSO Login Screen](https://raw.githubusercontent.com/j2k4/updaws/main/images/sso-credentials-1.png)
 
 `updaws` is for Option 2 people. Click on option 2, and you'll see a screen like this one. Copy the contents of the screen, and run `updaws` in your terminal. It will update your `~/.aws/config` file with the new credentials.
 
-Go Team Option 2!
+### Go Team Option 2!
