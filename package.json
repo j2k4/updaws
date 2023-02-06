@@ -10,5 +10,10 @@
     "updaws": "./app.js"
   },
   "author": "Jonathan Keith",
-  "license": "ISC"
+  "license": "MIT",
+  "keywords": "aws,credentials,cli,clipboard",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/j2k4/updaws.git"
+  }
 }
