@@ -47,16 +47,34 @@ const validateCredentials = (credentials) => {
   return true;
 };
 
+let _config;
 const readExistingConfig = () => {
-  try {
-    config = fs.readFileSync(configPath, "utf-8");
-  } catch (err) {
-    console.error(`Error reading config file: ${err}`);
-    return;
+  if (_config) {
+    return _config;
   }
 
+  try {
+    _config = fs.readFileSync(configPath, 'utf-8');
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.log(`${configPath} not found.`);
+    } else {
+      console.error(`Error reading ${configPath}: ${err}`);
+    }
+    _config = '';
+  }
+
+  return _config;
+}
+
+const captureCurrentRegionAndOutputSettings = () => {
+  const config = readExistingConfig();
+  if (!config) {
+    console.log("No existing config found. Using default region and output settings.");
+  }
   const lines = config.split("\n");
   let inDefaultSection = false;
+  let foundDefaultSection = false;
   var region, output;
 
   for (let i = 0; i < lines.length; i++) {
@@ -64,12 +82,13 @@ const readExistingConfig = () => {
 
     if (line === "[default]") {
       inDefaultSection = true;
+      foundDefaultSection = true;
     } else if (line.startsWith("[") && line.endsWith("]")) {
       inDefaultSection = false;
     } else if (inDefaultSection) {
-      if (line.startsWith("_region")) {
+      if (line.startsWith("region")) {
         region = line.split("=")[1].trim();
-      } else if (line.startsWith("_output")) {
+      } else if (line.startsWith("output")) {
         output = line.split("=")[1].trim();
       }
     }
@@ -77,8 +96,12 @@ const readExistingConfig = () => {
 
   _region = region ? region : _region;
   _output = output ? output : _output;
-}
 
+  if (foundDefaultSection) {
+    console.log(`Found existing [default] section in ${configPath}.`);
+  } 
+  console.log(`   region = ${_region} | output = ${_output}`); 
+}
 
 const updateAWSConfigNamedProfile = (credentials, profileName) => {
   const lines = credentials.split('\n');
@@ -87,8 +110,7 @@ const updateAWSConfigNamedProfile = (credentials, profileName) => {
   const secretKeyLine = lines[1];
   const sessionTokenLine = lines[2];
 
-  const existingConfig = fs.readFileSync(configPath, 'utf-8');
-  let config = existingConfig;
+  let config = readExistingConfig();
   config += `\n[profile ${profileName}]\nregion = ${_region}\noutput = ${_output}\n${accessKeyLine}\n${secretKeyLine}\n${sessionTokenLine}`;
 
   try {
@@ -101,8 +123,19 @@ const updateAWSConfigNamedProfile = (credentials, profileName) => {
 
 const backupFile = (filePath) => {
   const backupPath = `${filePath}.backup`;
-  fs.copyFileSync(filePath, backupPath);
-  console.log(`${filePath} backed up to ${backupPath}`);
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.copyFileSync(filePath, backupPath);
+    } else {
+      console.log(`No backup created because ${filePath} doesn't appear to exist.`);
+      return true;
+    }
+  } catch (error) {
+    console.error(`Error copying ${filePath} to ${backupPath}: ${error}`);
+    return false;
+  }
+  console.log(`${filePath} copied to ${backupPath}`);
+  return true;
 }
 
 const updateAWSConfigDefaultProfile = (credentials) => {
@@ -117,7 +150,7 @@ const updateAWSConfigDefaultProfile = (credentials) => {
   let inDefaultSection = false;
 
   try {
-    const existingConfig = fs.readFileSync(configPath, 'utf-8');
+    const existingConfig = readExistingConfig();
     const existingLines = existingConfig.split('\n');
     existingLines.forEach((line) => {
       if (line.startsWith('[default]')) {
@@ -145,7 +178,10 @@ const updateAWSConfigDefaultProfile = (credentials) => {
   }
 
   try {
-    backupFile(configPath);
+    if (!backupFile(configPath)) {
+      console.log('Exiting program. No files were modified.');
+      process.exit(1);
+    }
     fs.writeFileSync(configPath, config, 'utf-8');
     console.log(`${configPath} file successfully updated.`);
   } catch (error) {
@@ -167,7 +203,7 @@ exec("pbpaste", (error, stdout, stderr) => {
     process.exit(1);
   }
 
-  readExistingConfig();
+  captureCurrentRegionAndOutputSettings();
 
   // ok to update the file now, but will still ask the user to confirm
 
