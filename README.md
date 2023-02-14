@@ -50,6 +50,8 @@ If `updaws` does not find the `aws_access_key_id`, `aws_secret_access_key`, or `
 
 ![AWS SSO Login Screen](https://raw.githubusercontent.com/j2k4/updaws/main/images/sso-credentials-2.png)
 
-Click to copy the contents of the screen to your clipboard then run `updaws` in your terminal. It will update your `~/.aws/config` file with the new credentials.
+Click to copy the contents of the screen to your clipboard then run `updaws` in your terminal. It will update your `~/.aws/config` file with the new credentials. You'll see some output like this:
+
+![macOS terminal](https://raw.githubusercontent.com/j2k4/updaws/main/images/images/updaws-cli-1.png)
 
 ### Go Team Option 2!
