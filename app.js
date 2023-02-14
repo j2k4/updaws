@@ -89,7 +89,7 @@ const updateAWSConfigNamedProfile = (credentials, profileName) => {
    
     const existingConfig = fs.readFileSync(configPath, 'utf-8');
     let config =  existingConfig;
-    config += `\n[${profileName}]\nregion = ${_region}\noutput = ${_output}\n${accessKeyLine}\n${secretKeyLine}\n${sessionTokenLine}`;
+    config += `\n[profile ${profileName}]\nregion = ${_region}\noutput = ${_output}\n${accessKeyLine}\n${secretKeyLine}\n${sessionTokenLine}`;
   
     try {
       fs.writeFileSync(configPath, config, 'utf-8');
